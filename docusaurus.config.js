@@ -13,12 +13,12 @@ const config = {
   // favicon: "img/favicon.ico",
 
   // 页面地址
-  url: "https://github.io",
-  baseUrl: "",
+  url: "https://engsr6982.github.io",
+  baseUrl: "/projects-docs/",
 
   // Github配置
   organizationName: "engsr6982", // GitHub名称
-  projectName: "my-projects-docs", // 仓库名称
+  projectName: "projects-docs", // 仓库名称
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
