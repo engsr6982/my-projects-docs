@@ -42,7 +42,7 @@ const config = {
           editUrl: "https://github.com/engsr6982/projects-docs/tree/main",
         },
         theme: {
-          customCss: "./css/custom.css",
+          customCss: "./src/css/custom.css",
         },
       }),
     ],
