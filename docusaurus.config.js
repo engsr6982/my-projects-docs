@@ -25,8 +25,8 @@ const config = {
 
   // 语言配置
   i18n: {
-    defaultLocale: "zh-Hans",
-    locales: ["zh-Hans"],
+    defaultLocale: "zh",
+    locales: ["zh"],
   },
 
   presets: [
