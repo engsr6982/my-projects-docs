@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # 首页
 
-![IMG_0758](./img/logo_background.png)
+![logo](./img/logo_background.png)
 
 ## 前言
 

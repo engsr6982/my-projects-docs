@@ -20,7 +20,7 @@ const config = {
   organizationName: "engsr6982", // GitHub名称
   projectName: "projects-docs", // 仓库名称
 
-  onBrokenLinks: "throw",
+  onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
 
   // 语言配置
@@ -35,9 +35,10 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         blog: false,
-        pages: false,
+        pages: {
+          path: "pages",
+        },
         docs: {
-          // path: "projects",
           sidebarPath: "./sidebars.js",
           editUrl: "https://github.com/engsr6982/projects-docs/tree/main",
         },
@@ -67,6 +68,12 @@ const config = {
         // },
         hideOnScroll: true, // 滚动隐藏标题
         items: [
+          {
+            type: "docSidebar",
+            sidebarId: "Auto",
+            label: "Global",
+            position: "left",
+          },
           {
             type: "docSidebar",
             sidebarId: "OPTools",
@@ -118,11 +125,11 @@ const config = {
       // @ts-ignore
       ({
         hashed: true, // 是否对搜索结果进行hash
-        language: ["zh"], // 搜索语言
-        indexDocs: true, // 是否对docs进行索引
+        // language: ["zh"], // 搜索语言
+        // indexDocs: true, // 是否对docs进行索引
         indexBlog: false, // 是否对blog进行索引
-        indexPages: false, // 是否对pages进行索引
-        docsRouteBasePath: ["docs"], // 配置需要搜索的文档路径
+        // indexPages: false, // 是否对pages进行索引
+        // docsRouteBasePath: ["docs"], // 配置需要搜索的文档路径
       }),
     ],
   ],

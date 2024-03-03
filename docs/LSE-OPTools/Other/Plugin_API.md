@@ -17,7 +17,7 @@ const Form_inside_API = ll.import('Form_inside_API');
     传入玩家名或XUID
   - func: `String`
     内部功能函数
-    详见[首页](../README)
+    详见[首页](../README.md)
 
 > 调用举例
 
