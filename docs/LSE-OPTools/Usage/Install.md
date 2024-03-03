@@ -6,13 +6,13 @@ sidebar_position: 1
 
 ## 安装插件  
 
-1. 首先,你需要确保你的**VPS/面板服**拥有[LSE](https://www.minebbs.com/LSE/)
+1. 首先,你需要确保你的**VPS/面板服**拥有LSE引擎
 
 2. 从**MineBBS**购买[OPTools](https://www.minebbs.com/resources/optools-op-gui.4836/)后，点击下载，下载最新版的[OPTools](https://www.minebbs.com/resources/optools-op-gui.4836/)  
 
 3. 打开你的服务器目录，找到**Plugins**文件夹并进入
      - 没有**Plugins**文件夹？  
-          - 请确保已正常安装[LSE](https://www.minebbs.com/LSE/)
+          - 请确保已正常安装LSE引擎
 
 4. 把下载的插件上传到**Plugins**文件夹下  
 

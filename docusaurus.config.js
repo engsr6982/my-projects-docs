@@ -25,8 +25,8 @@ const config = {
 
   // 语言配置
   i18n: {
-    defaultLocale: "zh",
-    locales: ["zh"],
+    defaultLocale: "zh-CN",
+    locales: ["zh-CN"],
   },
 
   presets: [
@@ -37,12 +37,12 @@ const config = {
         blog: false,
         pages: false,
         docs: {
-          path: "projects",
+          // path: "projects",
           sidebarPath: "./sidebars.js",
           editUrl: "https://github.com/engsr6982/projects-docs/tree/main",
         },
         theme: {
-          customCss: "./src/css/custom.css",
+          customCss: "./static/css/custom.css",
         },
       }),
     ],
@@ -121,8 +121,8 @@ const config = {
         language: ["zh"], // 搜索语言
         indexDocs: true, // 是否对docs进行索引
         indexBlog: false, // 是否对blog进行索引
-        indexPages: true, // 是否对pages进行索引
-        docsRouteBasePath: ["/projects"], // 配置需要搜索的文档路径
+        indexPages: false, // 是否对pages进行索引
+        docsRouteBasePath: ["docs"], // 配置需要搜索的文档路径
       }),
     ],
   ],

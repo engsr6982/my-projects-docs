@@ -4,12 +4,12 @@ sidebar_position: 1
 
 # 首页
 
-![IMG_0758](./image/logo_background.png)
+![IMG_0758](./img/logo_background.png)
 
 ## 前言
 
 为了确保最佳的使用体验，请仔细阅读文档  
-**遇到问题请在[Github Issue](https://github.com/engsr6982/LSE_Plugins/issues)反馈！**
+**遇到问题请在[Github Issue](https://github.com/engsr6982/lse-workspace/issues)反馈！**
 
 :::tip
 [点我前往MIneBBS OPTools](https://www.minebbs.com/resources/op-tools-op-gui.4836/)  
