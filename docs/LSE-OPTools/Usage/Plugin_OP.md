@@ -13,7 +13,7 @@ sidebar_position: 2
 
 > 添加成功后会在控制台输出
 
-```log
+```log title="Console"
 21:28:23 INFO [Server] 玩家xxx已设置为插件管理
 ```
 
@@ -28,7 +28,7 @@ sidebar_position: 2
 
 > 添加成功后会在控制台输出
 
-```log
+```log title="Console"
 21:27:55 INFO [Server] 移除玩家xxx的插件管理成功！
 ```
 

@@ -26,7 +26,6 @@ const Form_inside_API = ll.import('Form_inside_API');
 Form_inside_API('steve', 'Kick_Ui'); // 向Steve发送“踢出玩家”表单
 ```
 
-
 ## 权限组接口
 
 > [!tip]

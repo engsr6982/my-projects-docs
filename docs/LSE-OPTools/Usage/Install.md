@@ -18,7 +18,7 @@ sidebar_position: 1
 
 5. 启动你的服务器，**观察控制台**
 
-     ```log {12-14}
+     ```log {12-14} title="Console"
      21:57:44 INFO [OPTools] Loading...
 
                   ____  _____    _______          _
@@ -47,7 +47,7 @@ sidebar_position: 1
 
 3. 启动你的服务器，**观察控制台**
 
-     ```log {12-14}
+     ```log {12-14} title="Console"
      21:57:44 INFO [OPTools] Loading...
 
                   ____  _____    _______          _
@@ -69,7 +69,7 @@ sidebar_position: 1
 :::tip
  如果`更新后`遇到以下报错
 
- ```log
+ ```log title="Console"
  21:57:44 ERROR [OPTools] The homepage file version does not match!
  Current version: 2.0.0 Latest version: 2.2.0
  ```

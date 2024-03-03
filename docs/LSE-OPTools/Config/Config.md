@@ -4,14 +4,11 @@
 
 > 用于配置插件各个功能，以及开启、关闭一些功能
 
-- 路径
-    - `./plugins/PPOUI/OPTools/config/Config.json`
-
 ### 文件详解
 
 - `json文件不允许添加注释，请勿直接复制`  
 
-```js
+```js title="./plugins/PPOUI/OPTools/config/Config.json"
 {
     "version": "2.5.3",// 文件版本
     "language": "zh_CN",// 语言

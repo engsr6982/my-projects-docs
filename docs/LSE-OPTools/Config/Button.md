@@ -4,9 +4,6 @@
 
 > 此文件用于定义`编辑游戏规则、获取隐藏方块`显示的按钮
 
-- 路径
-  - `./plugins/PPOUI/OPTools/Data/ButtonData.json`
-
 ### 关于自定义  
 
 - 自定义**游戏规则**  
@@ -25,7 +22,7 @@
 
 - `json文件不允许添加注释，请勿直接复制`  
 
-```js {3-8}
+```js {3-8} title="./plugins/PPOUI/OPTools/Data/ButtonData.json"
 {
     "Rule": [//游戏规则
         {

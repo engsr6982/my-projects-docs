@@ -4,9 +4,6 @@
 
 > 此文件用于定义OPTools主表单显示内容
 
-- 路径
-  - `./plugins/PPOUI/OPTools/Data/MainGUI.json`
-
 ### 关于JSON定义
 
 > 这是一个钮所需要的参数
@@ -29,7 +26,7 @@
 
 例如：
 
-```js
+```js title="./plugins/PPOUI/OPTools/Data/MainGUI.json"
 {
     "name": "杀死玩家",
     "image": "textures/ui/icon_recipe_equipment",
@@ -55,7 +52,7 @@
 
 - 如果**不需要某些功能，删除对应按钮数组即可**
 
-```js
+```js title="./plugins/PPOUI/OPTools/Data/MainGUI.json"
 {
     "version": "2.3.0",//版本
     "Main": [

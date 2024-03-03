@@ -4,14 +4,11 @@
 
 > 此文件用于给OPTools内部的一些功能绑定到一个单独的命令上，通过绑定的命令打开绑定的功能
 
-- 路径
-  - `./plugins/PPOUI/OPTools/data/BindCmd.json`
-
 ### 文件详解
 
 - `json文件不允许添加注释，请勿直接复制`  
 
-```js {2-8}
+```js {2-8} title="./plugins/PPOUI/OPTools/data/BindCmd.json"
 [
     {
         "Cmd": "test",//命令名称
