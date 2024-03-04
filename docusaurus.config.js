@@ -70,14 +70,14 @@ const config = {
         items: [
           {
             type: "docSidebar",
-            sidebarId: "Auto",
-            label: "Global",
+            sidebarId: "OPTools",
+            label: "LSE-OPTools",
             position: "left",
           },
           {
             type: "docSidebar",
-            sidebarId: "OPTools",
-            label: "LSE-OPTools",
+            sidebarId: "ZoneCheckV3",
+            label: "ZoneCheckV3",
             position: "left",
           },
           {
