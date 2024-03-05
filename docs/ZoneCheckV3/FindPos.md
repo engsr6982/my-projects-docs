@@ -52,11 +52,20 @@ sidebar_position: 6
 ```
 
 :::tip
-调用示例
 
-```js title="test.js"
+```js title="调用示例"
 const fp = ll.imports("ZoneCheckV3", "findPos");
 fp({x:0, z:0, dimid:0},{startingValue:301, endValue:0, stopValue:10},["minecraft:lava","minecraft:flowing_lava"],{"offset1":1, "offset2": 2});
+```
+
+```js title="返回值"
+{
+    status: 0 | 1, // 状态（是否查找成功）
+    x: int,
+    y: int, // 安全坐标
+    z: int,
+    dimid: int
+}
 ```
 
 :::
