@@ -14,18 +14,25 @@ LeviOPTools也实现了与Js版本一样的根据配置文件构建表单
   "content": "cpp index form", // 表单内容
   "buttons": [
     {
-      "title": "button1", // 按钮表单
-      "imageUrl": "", // 按钮图片地址
-      "imageType": "", // 图片类别 url 或 path
-      "callbackType": "", // 回调类别
-      "callbackRun": "" // 回调执行的东西
+      "title": "cmd",
+      "imageUrl": "",
+      "imageType": "",
+      "callbackType": "cmd",
+      "callbackRun": "say 111"
     },
     {
-      "title": "button2(image error)",
-      "imageUrl": "a",
-      "imageType": "a", // type不能填错，填错这个按钮将不会显示
-      "callbackType": "",
-      "callbackRun": ""
+      "title": "form", // 按钮标题
+      "imageUrl": "", // 图片地址
+      "imageType": "", // 图片类别 url 或 path
+      "callbackType": "form",// 回调类别
+      "callbackRun": "index.json" //回调执行的东西
+    },
+    {
+      "title": "function",
+      "imageUrl": "",
+      "imageType": "",
+      "callbackType": "function", // 插件内部接口
+      "callbackRun": "test"
     },
     {
       "title": "button2",
@@ -36,4 +43,11 @@ LeviOPTools也实现了与Js版本一样的根据配置文件构建表单
     }
   ]
 }
+
 ```
+
+| callbackType | 描述              |
+| ------------ | ----------------  |
+| cmd          | 执行命令          |
+| form         | 打开另一个表单文件 |
+| function     | 运行插件内部函数   |
