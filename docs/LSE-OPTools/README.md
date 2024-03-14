@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# 首页
+# LSE-OPTools
 
 ![logo](./img/logo_background.png)
 
