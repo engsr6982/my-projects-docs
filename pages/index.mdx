@@ -1,15 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import {Redirect} from '@docusaurus/router';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
-export default function MyComponent() {
-  // 跳转页，本页不实现功能
-  useEffect(() => {
-    window.location.href = `${window.location.href}docs/`;
-  }, []); // 空依赖数组确保这个效果只会在组件挂载时执行一次
-
-  return (
-    <div>
-      <h1>Hello, world!</h1>
-      <p>This is a paragraph.</p>
-    </div>
-  );
+export default () => {
+  const udc = useDocusaurusContext();
+  const target = `${udc.siteConfig.baseUrl}docs/`;
+  return <Redirect to={target} />
 }
