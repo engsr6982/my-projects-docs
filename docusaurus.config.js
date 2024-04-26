@@ -8,8 +8,8 @@ import { themes as prismThemes } from "prism-react-renderer";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "engsr6982's projects docs",
-  tagline: "engsr6982's some projects docs",
+  title: "Project Docs",
+  tagline: "Project Docs",
   // favicon: "img/favicon.ico",
 
   // 页面地址
@@ -36,7 +36,7 @@ const config = {
       ({
         blog: false,
         pages: {
-          path: "pages",
+          path: "pages"
         },
         docs: {
           sidebarPath: "./sidebars.js",
@@ -71,7 +71,7 @@ const config = {
           {
             type: "docSidebar",
             sidebarId: "auto",
-            label: "项目",
+            label: "文档",
             position: "left",
           },
           {
@@ -80,30 +80,6 @@ const config = {
             position: "right",
           },
         ],
-      },
-      // 页面底部
-      footer: {
-        style: "dark",
-        links: [
-          {
-            title: "Links",
-            items: [
-              {
-                label: "GitHub",
-                href: "https://github.com/engsr6982/projects-docs",
-              },
-              {
-                label: "MineBBS",
-                href: "https://minebbs.com",
-              },
-              {
-                label: "Docusaurus",
-                href: "https://docusaurus.io/",
-              },
-            ],
-          },
-        ],
-        copyright: `Copyright © ${new Date().getFullYear()} engsr6982's some Projects docs. Built with Docusaurus.`,
       },
       prism: {
         theme: prismThemes.github,

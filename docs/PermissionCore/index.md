@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# PermissionCore 权限组核心
+# PermissionCore
 
 一个适用于`Levilamina`的非官方权限组前置, 旨在为`Levilamina`原生插件提供一个权限组轮子
 
