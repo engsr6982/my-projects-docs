@@ -8,33 +8,36 @@ sidebar_position: 0
 
 所以，点侧边栏查看文档
 
-欢迎pr
+欢迎 pr
 
-import DocCard from '../src/theme/DocCard';
+import DocCardList from "../src/theme/DocCardList";
 
-<DocCard item={{
-    type: "custom",
-    title: "LeviOPTools",
-    href: "docs/LeviOPTools"
-}} />
-
-<DocCard item={{
-    type: "custom",
-    title: "PermissionCore",
-    href: "docs/PermissionCore"
-}} />
-
-<DocCard item={{
-    type: "custom",
-    title: "ZoneCheckV3",
-    href: "docs/ZoneCheckV3"
-}} />
-
-<DocCard item={{
-    type: "custom",
-    title: "LSE-OPTools",
-    href: "docs/LSE-OPTools",
-    description: null,
-    icon: ""
-}} />
-
+<DocCardList
+  props={{
+    custom: true,
+    items: [
+      {
+        type: "custom",
+        title: "LeviOPTools",
+        href: "docs/LeviOPTools",
+      },
+      {
+        type: "custom",
+        title: "PermissionCore",
+        href: "docs/PermissionCore",
+      },
+      {
+        type: "custom",
+        title: "ZoneCheckV3",
+        href: "docs/ZoneCheckV3",
+      },
+      {
+        type: "custom",
+        title: "LSE-OPTools",
+        href: "docs/LSE-OPTools",
+        description: null,
+        icon: "",
+      },
+    ],
+  }}
+/>
