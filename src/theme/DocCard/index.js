@@ -39,29 +39,68 @@ function CardLayout({ href, icon, title, description }) {
   );
 }
 
-/// Custom Start
+function CardCategory({
+  item,
+}) {
+  const href = findFirstSidebarItemLink(item);
+  const categoryItemsPlural = useCategoryItemsPlural();
 
-function Card({ item }) {
+  // Unexpected: categories that don't have a link have been filtered upfront
+  if (!href) {
+    return null;
+  }
+
   return (
     <CardLayout
-      href={item.href}
-      icon={item.icon}
-      title={item.title}
-      description={item.description}
+      href={href}
+      icon="🗃️"
+      title={item.label}
+      description={item.description ?? categoryItemsPlural(item.items.length)}
     />
   );
 }
 
-export default function ProjectCard({ title, href, description, icon }) {
-  const it = {
-    href: href,
-    icon: icon ? icon : "",
-    title: title,
-    description: description ? description : ""
+function CardLink({item}) {
+  const icon = isInternalUrl(item.href) ? '📄️' : '🔗';
+  const doc = useDocById(item.docId ?? undefined);
+  return (
+    <CardLayout
+      href={item.href}
+      icon={icon}
+      title={item.label}
+      description={item.description ?? doc?.description}
+    />
+  );
+}
+
+/// Custom Start
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+function ProjectCard({ title, href, description, icon }) {
+  if (!href) throw new Error("ProjectCard.href error");
+  if (!title) throw new Error("ProjectCard.title error");
+  href = useBaseUrl(href);
+  return (
+    <CardLayout
+      href={href}
+      title={title}
+      description={description ? description : "点击查看文档"}
+      icon={icon ? icon : isInternalUrl(href) ? '📄️' : '🔗'}
+    />
+  );
+}
+
+// Custom End
+
+export default function DocCard({item}) {
+  switch (item.type) {
+    case 'link':
+      return <CardLink item={item} />;
+    case 'category':
+      return <CardCategory item={item} />;
+    case 'custom': // add custom card
+      return <ProjectCard {...item} />;
+    default:
+      throw new Error(`unknown item type ${JSON.stringify(item)}`);
   }
-  if (!it.href) throw new Error("ProjectCard.href error");
-  if (!it.title) throw new Error("ProjectCard.title error");
-  if (icon == "") it.icon = isInternalUrl(it.href) ? '📄️' : '🔗';
-  if (it.description == "") it.description = "点击查看文档";
-  return <Card item={it} />
 }

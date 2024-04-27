@@ -10,7 +10,31 @@ sidebar_position: 0
 
 欢迎pr
 
-import useBaseUrl from '@docusaurus/useBaseUrl';
-import ProjectCard from '../src/theme/DocCard';
+import DocCard from '../src/theme/DocCard';
 
-<ProjectCard title="LeviOPTools" href={useBaseUrl("docs/LeviOPTools")}/>
+<DocCard item={{
+    type: "custom",
+    title: "LeviOPTools",
+    href: "docs/LeviOPTools"
+}} />
+
+<DocCard item={{
+    type: "custom",
+    title: "PermissionCore",
+    href: "docs/PermissionCore"
+}} />
+
+<DocCard item={{
+    type: "custom",
+    title: "ZoneCheckV3",
+    href: "docs/ZoneCheckV3"
+}} />
+
+<DocCard item={{
+    type: "custom",
+    title: "LSE-OPTools",
+    href: "docs/LSE-OPTools",
+    description: null,
+    icon: ""
+}} />
+
