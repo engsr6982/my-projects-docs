@@ -47,9 +47,9 @@ export default function SearchPage() {
             <p>Loading...</p>
           ) : (
             filteredData.map(item => (
-              <div key={item.id} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px', borderRadius: '5px', display: 'flex', flexDirection: 'column', width: 'calc(100% / 3 - 20px)', minHeight: '200px', maxHeight: '250px' }}>
+              <div key={item.id} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px', borderRadius: '5px', display: 'flex', flexDirection: 'column', width: 'calc(20% - 20px)', minWidth: '400px', maxWidth: 'calc(100% / 5 - 20px)', minHeight: '180px', maxHeight: '220px', margin: '0 10px 10px 0' }}>
                 <img src={item.img || 'path/to/default/image.png'} alt="" style={{ width: '50px', marginRight: '10px', objectFit: 'cover', alignSelf: 'flex-end' }} onError={(e) => { e.target.onerror = null; e.target.src = 'path/to/default/image.png'; }} />
-                <div style={{ marginTop: '5px' }}>
+                <div style={{ marginTop: '5px', padding: '5px' }}>
                   <h4 style={{ margin: '5px 0' }}>{item.name}</h4>
                   <p style={{ margin: '2px 0' }}>ID: {item.id}</p>
                   <p style={{ margin: '2px 0' }}>DV: {item.dv}</p>
