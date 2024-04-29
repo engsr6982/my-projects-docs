@@ -1,0 +1,52 @@
+.search-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  .search-bar input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .card {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .card img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    border-radius: 4px;
+  }
+  
+  .card div {
+    flex-grow: 1;
+  }
+  
+  @media (max-width: 600px) {
+    .search-container {
+      padding: 10px;
+    }
+  
+    .card {
+      flex-direction: column;
+      align-items: start;
+    }
+  
+    .card img {
+      margin-bottom: 10px;
+    }
+  }
