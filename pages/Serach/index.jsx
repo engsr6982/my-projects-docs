@@ -29,7 +29,8 @@ export default function SearchPage() {
       );
       setFilteredData(results);
     } else {
-      setFilteredData(data.splice(0, 5));
+      setFilteredData(data);
+      // setFilteredData(data.splice(0, 5));
     }
   }, [searchTerm, data]);
 
@@ -40,7 +41,7 @@ export default function SearchPage() {
 
   return (
     <Layout title="SearchPage" description="SearchPage React Page">
-      <div style={{ padding: "20px", height: "100%" }}>
+      <div style={{ padding: "20px", height: "calc(100vh - 60px)" }}>
         <div
           style={{
             display: "flex",
@@ -59,7 +60,7 @@ export default function SearchPage() {
         <div
           className="el-row"
           style={{
-            maxHeight: "60vh",
+            height: "calc(100% - 60px)",
             overflowY: "auto",
             display: "flex",
             flexWrap: "wrap",
@@ -76,7 +77,7 @@ export default function SearchPage() {
                 style={{
                   flex: "1 1 auto",
                   minWidth: "360px",
-                  maxWidth: "420px",
+                  maxWidth: "450px",
                   minHeight: "180px",
                   maxHeight: "220px",
                   margin: "0 10px 10px 0",
