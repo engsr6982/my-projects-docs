@@ -1,42 +1,55 @@
 import React, { useState, useEffect } from "react";
-import Layout from "@theme/Layout";
+import {
+  List,
+  Card,
+  Typography,
+  Button,
+  Avatar,
+  Input,
+  Select,
+  message,
+} from "antd";
 import axios from "axios";
-import "./styles.css"; // 引入CSS样式
+import Layout from "@theme/Layout";
+
+const { Paragraph } = Typography;
+const { Option } = Select;
 
 export default function SearchPage() {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [category, setCategory] = useState("all");
+  const [mIsLoading, set_mIsLoading] = useState(false); // 是否正在加载
 
+  // 请求json数据
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true);
+      set_mIsLoading(true);
       const result = await axios(
         "https://raw.githubusercontent.com/engsr6982/Minecraft-Bedrock_ID-SQLite/main/JSON/mcid_old.json"
       );
       setData(result.data.mcid);
-      setIsLoading(false);
+      set_mIsLoading(false);
     };
-
     fetchData();
   }, []);
 
   useEffect(() => {
+    let results = data;
     if (searchTerm !== "") {
-      const results = data.filter((item) =>
+      results = results.filter((item) =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setFilteredData(results);
-    } else {
-      setFilteredData(data);
-      // setFilteredData(data.splice(0, 5));
     }
-  }, [searchTerm, data]);
+    if (category !== "all") {
+      results = results.filter((item) => item.type === category);
+    }
+    setFilteredData(results);
+  }, [searchTerm, category, data]);
 
-  const handleImageError = (e) => {
-    e.target.src =
-      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAADk0lEQVR4nO2Y3U/TYBTGFxP9J/RWL7zFFW646ZagiciCfJj4N8C1XnkL0g0QNkU0DuRmwTnTYmZYxxQIbDEQMOnGGENgjPkFjn3csMgxb7cBXdt1ny0kO8mTLG3f5Pm1z3nfk6lUtapVrWpVq0pXj2v1GuHwThIOJkbQXlBUDuSBsfZOM9cLNt9He/cVN05zhTzpaf9VSQD2zZ8Dw4SwLAUAnIPY0GJiotIAipv05lUNgKjwG9U7fTC2HAGbP8bKvBxhr12YL2BejgAVTHKErl0YAJs/xgOwrceUARj8vM7qQgIYnD4Yce+wMsyslRWhsSUFImRa+A4vPSFWpoWtgtfpnT4WQtEmHpwNnJjP6tmXjar0jKrSAIYZH4x4dngAxUaJUATA6YXnC1s881mhe+caYGh2Q9T8SZTmhKM06gnBK8+OcgAoHiMS5tNRCoFhxs9Za5wLArmRADKYANP8pgIAKDqL25Lms3qxuA36zNoBl5/d58/u+QMuv7wAQ3PBgs1nNTwbBD3tAwuzz9v3J5mDvFtnRQH6Xf6izbNyh2Bi9RfPPJURuld1APSWUBxKAchnnsqokKYuC8A4X3x0kMxLEbZhxYx/XI+Cx0JB8PEj2OvUwd/bjax2O1pgpbsbbMNm6J/+Vh4AarRSzL/+GoYPgbioefekHX536iChwfJqr+0uWE3jpQGw0XEXH51Rzy5Y16KCxqcCcfD1EpLGcxXXqPvgiepSUQDG+dNBrRhZmAPRN1+K+cQpRG9JPVApWY3jPFPJ1iZIaBv4hrUN6Xu5z+OYThEA1IwozxwzD5rhXzgEKTvFhdDWQ4q0wvHPCCQfcvskjqs3of3mFdkBbENvuObvN8FxJAzZStnJNIS2gf2dLfQMepYLgbXLDrDS1ZUTkXo4It+dGE1DUJCi3udcy4CdXYtjE7IDhNuaBXJez4OQNJ/WGg+gj2YOqwkQvdMovLtohSF4fcGROi7wBRirUgApysoH+DQlDoCrD/kADu8Ngmb+VC1C7feEzZN885JfAcd8glsp+h8e/ZVdjTih2UbKfMpOwlHO1xCBeKuSu+JadUelttEYjrXJDgB1dZcTGnVA+CAjeQcZauzjH0IHGRYUPMjkqJj2VmvZo4QGa1EpWWiqTJQ8zGE9KqULjcRxXP20lEk07zgtdyVxTJfbEyKHVkDx2IgVamw0mKHZBu3t6IRlhX7j2ATabdAzQov/A+VQ83mEsVV5AAAAAElFTkSuQmCC";
+  const handleCopyJson = (item) => {
+    navigator.clipboard.writeText(JSON.stringify(item));
   };
 
   return (
@@ -53,89 +66,123 @@ export default function SearchPage() {
             display: "flex",
             justifyContent: "space-between",
             marginBottom: "20px",
-            borderRadius: "10px", // 添加圆角
           }}
         >
-          <input
+          <Input
             type="text"
             placeholder="搜索物品..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "10px",
-              borderRadius: "10px",
-              backgroundColor: "#f0f0f0",
+            style={{ width: "calc(100% - 50px - 150px - 10px)" }}
+          />
+          <Select
+            defaultValue="all"
+            style={{ width: "120px", margin: "0 5px" }}
+            onChange={setCategory}
+          >
+            <Option value="all">所有分类</Option>
+            {/* 动态生成选项 */}
+            {Array.from(new Set(data.map((item) => item.type))).map((type) => (
+              <Option key={type} value={type}>
+                {type}
+              </Option>
+            ))}
+          </Select>
+          <Button
+            onClick={() => {
+              /* 切换数据源逻辑 */
+            }}
+          >
+            切换版本
+          </Button>
+        </div>
+
+        {/* 卡片展示区 */}
+        <div style={{ height: "calc(100vh - 135px)", overflowY: "auto" }}>
+          <List
+            rowKey="id"
+            grid={{
+              gutter: 16,
+              xs: 1,
+              sm: 2,
+              md: 3,
+              lg: 3,
+              xl: 4,
+              xxl: 4,
+            }}
+            dataSource={[
+              ...[
+                {
+                  id: 1,
+                  title: "卡片列表",
+                  description: "awaa",
+                },
+                {
+                  id: 1,
+                  title: "卡片列表",
+                  description: "awaa",
+                },
+                {
+                  id: 1,
+                  title: "卡片列表",
+                  description: "awaa",
+                },
+                {
+                  id: 1,
+                  title: "卡片列表",
+                  description: "awaa",
+                },
+                {
+                  id: 1,
+                  title: "卡片列表",
+                  description: "awaa",
+                },
+                {
+                  id: 1,
+                  title: "卡片列表",
+                  description: "awaa",
+                },
+              ],
+            ]}
+            // 渲染卡片
+            renderItem={(item) => {
+              return (
+                <List.Item
+                  key={item.id}
+                  styles={{ width: "100%", height: "201px" }}
+                >
+                  <Card
+                    hoverable
+                    actions={[
+                      <a key="option1" onClick={handleCopyJson({})}>
+                        复制JSON
+                      </a>,
+                      <a key="option2">查看详情</a>,
+                    ]}
+                  >
+                    <Card.Meta
+                      avatar={
+                        <Avatar
+                          size={48}
+                          src="https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.pngs"
+                          onError={() => {
+                            message.error("图片加载失败！");
+                            return false;
+                          }}
+                        />
+                      }
+                      title={<a>{item.title}</a>}
+                      description={
+                        <Paragraph ellipsis={{ rows: 3 }}>
+                          {item.description}
+                        </Paragraph>
+                      }
+                    />
+                  </Card>
+                </List.Item>
+              );
             }}
           />
-        </div>
-        <div
-          className="el-row"
-          style={{
-            height: "calc(100% - 60px)",
-            overflowY: "auto",
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "flex-start",
-            borderRadius: "10px", // 添加圆角
-          }}
-        >
-          {isLoading ? (
-            <p>Loading...</p>
-          ) : (
-            filteredData.map((item, index) => (
-              <div
-                key={index}
-                className="el-col el-card box-card"
-                style={{
-                  flex: "1 1 auto",
-                  minWidth: "360px",
-                  maxWidth: "420px",
-                  minHeight: "180px",
-                  maxHeight: "220px",
-                  margin: "0 10px 10px 0",
-                  position: "relative",
-                  borderRadius: "10px", // 添加圆角
-                }}
-              >
-                <img
-                  src={item.img}
-                  alt="icon"
-                  style={{
-                    position: "absolute",
-                    top: "15px",
-                    right: "15px",
-                    width: "16px",
-                    height: "16px",
-                    zIndex: 1000,
-                  }}
-                  onError={handleImageError}
-                  loading="lazy"
-                />
-                <div className="header">
-                  <span className="header-label">{item.name}</span>
-                </div>
-                <div style={{ margin: "15px" }}>
-                  <div>
-                    <div className="card-label">Type</div>
-                    <span>{item.id}</span>
-                  </div>
-                  <div>
-                    <div className="card-label">特殊值</div>
-                    <span>{item.dv}</span>
-                  </div>
-                  <div>
-                    <div className="card-label">类别</div>
-                    <span>{item.type}</span>
-                  </div>
-                  <div>
-                    <div className="card-label">图片</div>
-                    <span>{item.path}</span>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
         </div>
       </div>
     </Layout>

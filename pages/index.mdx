@@ -1,9 +1,22 @@
-import React from 'react';
-import {Redirect} from '@docusaurus/router';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import DocCardList from "../src/theme/DocCardList";
 
-export default () => {
-  const udc = useDocusaurusContext();
-  const target = `${udc.siteConfig.baseUrl}docs/`;
-  return <Redirect to={target} />
-}
+<DocCardList
+  props={{
+    custom: true,
+    items: [
+      {
+        type: "custom",
+        title: "查看文档",
+        href: "docs/",
+      },
+      {
+        type: "custom",
+        title: "Minecraft工具",
+        href: "mcid",
+        description: "Minecraft物品ID查询",
+        icon: "🧰",
+      },
+    ],
+
+}}
+/>
