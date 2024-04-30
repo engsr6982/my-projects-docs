@@ -77,7 +77,7 @@ const config = {
           {
             label: "Minecraft物品查询",
             position: "left",
-            to: "/serach",
+            to: "/McID",
           },
           {
             href: "https://github.com/engsr6982/projects-docs",

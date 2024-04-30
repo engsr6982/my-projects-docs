@@ -40,13 +40,20 @@ export default function SearchPage() {
   };
 
   return (
-    <Layout title="SearchPage" description="SearchPage React Page">
-      <div style={{ padding: "20px", height: "calc(100vh - 60px)" }}>
+    <Layout title="McID" description="Minecraft物品ID查询">
+      <div
+        style={{
+          padding: "20px",
+          height: "calc(100vh - 60px)",
+          borderRadius: "10px",
+        }}
+      >
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             marginBottom: "20px",
+            borderRadius: "10px", // 添加圆角
           }}
         >
           <input
@@ -54,7 +61,12 @@ export default function SearchPage() {
             placeholder="搜索物品..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: "100%", padding: "10px" }}
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "10px",
+              backgroundColor: "#f0f0f0",
+            }}
           />
         </div>
         <div
@@ -65,6 +77,7 @@ export default function SearchPage() {
             display: "flex",
             flexWrap: "wrap",
             justifyContent: "flex-start",
+            borderRadius: "10px", // 添加圆角
           }}
         >
           {isLoading ? (
@@ -77,11 +90,12 @@ export default function SearchPage() {
                 style={{
                   flex: "1 1 auto",
                   minWidth: "360px",
-                  maxWidth: "450px",
+                  maxWidth: "420px",
                   minHeight: "180px",
                   maxHeight: "220px",
                   margin: "0 10px 10px 0",
                   position: "relative",
+                  borderRadius: "10px", // 添加圆角
                 }}
               >
                 <img
