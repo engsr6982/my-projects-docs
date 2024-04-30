@@ -36,7 +36,7 @@ const config = {
       ({
         blog: false,
         pages: {
-          path: "pages"
+          path: "pages",
         },
         docs: {
           sidebarPath: "./sidebars.js",
@@ -62,10 +62,10 @@ const config = {
       // 导航栏
       navbar: {
         title: "Projects Docs",
-        // logo: {
-        //   alt: "My Site Logo",
-        //   src: "img/logo.svg",
-        // },
+        logo: {
+          alt: "logo",
+          src: "img/logo.png",
+        },
         hideOnScroll: true, // 滚动隐藏标题
         items: [
           {
@@ -73,6 +73,11 @@ const config = {
             sidebarId: "auto",
             label: "文档",
             position: "left",
+          },
+          {
+            label: "Minecraft物品查询",
+            position: "left",
+            to: "/serach",
           },
           {
             href: "https://github.com/engsr6982/projects-docs",
