@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   List,
   Card,
@@ -15,42 +15,78 @@ import Layout from "@theme/Layout";
 const { Paragraph } = Typography;
 const { Option } = Select;
 
-export default function SearchPage() {
-  const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [category, setCategory] = useState("all");
+/* 
+
+Github Api:
+tags: https://api.github.com/repos/engsr6982/Minecraft-ItemList/tags
+
+file: https://raw.githubusercontent.com/engsr6982/Minecraft-ItemList/main/Item.json
+
+file_with_version: https://raw.githubusercontent.com/engsr6982/Minecraft-ItemList/v1.19.73/Item.json
+
+file json structure:
+
+[
+	{
+		"name": "橡木板",
+		"type": "minecraft:planks",
+		"id": null,
+		"aux": 0,
+		"class": "建筑",
+		"icon": null
+	}
+]
+
+*/
+
+export default function McIDPage() {
   const [mIsLoading, set_mIsLoading] = useState(false); // 是否正在加载
 
-  // 请求json数据
-  useEffect(() => {
-    const fetchData = async () => {
-      set_mIsLoading(true);
-      const result = await axios(
-        "https://raw.githubusercontent.com/engsr6982/Minecraft-Bedrock_ID-SQLite/main/JSON/mcid_old.json"
+  const [mVersionList, set_mVersionList] = useState([]); // 版本列表数据
+  const [mItemList, set_mItemList] = useState([]); // 物品列表数据
+
+  const [mSearchInputData, set_mSearchInputData] = useState(""); // 搜索框输入数据
+  const [mSelectedClass, set_mSelectedClass] = useState("all"); // 选择的分类
+  const [mSelectedVersion, set_mSelectedVersion] = useState(""); // 选择的版本
+
+  const [mFilterShowData, set_mFilterShowData] = useState([]);
+
+  const fetchItemData = useCallback(async () => {
+    set_mIsLoading(true);
+    if (mVersionList.length === 0) {
+      const verData = await axios(
+        "https://api.github.com/repos/engsr6982/Minecraft-ItemList/tags"
       );
-      setData(result.data.mcid);
-      set_mIsLoading(false);
-    };
-    fetchData();
-  }, []);
+      if (verData.status !== 200) return message.error("获取版本列表失败！");
+      set_mVersionList(verData.data.map((item) => item.name)); // 获取版本列表
+      set_mSelectedVersion(verData.data[0].name); // 默认选择第一个版本
+    }
+    if (mSelectedVersion === "") return message.error("请选择版本！");
+    const itData = await axios(
+      `https://raw.githubusercontent.com/engsr6982/Minecraft-ItemList/${
+        mSelectedVersion === "default" ? mVersionList[0] : mSelectedVersion
+      }/Item.json`
+    );
+    if (itData.status !== 200) return message.error("获取物品列表失败！");
+    set_mItemList(itData.data);
+    set_mIsLoading(false);
+  }, [mSelectedVersion, mVersionList]);
+  useEffect(() => {
+    fetchItemData();
+  }, [fetchItemData]);
 
   useEffect(() => {
-    let results = data;
-    if (searchTerm !== "") {
+    let results = mItemList;
+    if (mSearchInputData !== "") {
       results = results.filter((item) =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        item.name.toLowerCase().includes(mSearchInputData.toLowerCase())
       );
     }
-    if (category !== "all") {
-      results = results.filter((item) => item.type === category);
+    if (mSelectedClass !== "all") {
+      results = results.filter((item) => item.type === mSelectedClass);
     }
-    setFilteredData(results);
-  }, [searchTerm, category, data]);
-
-  const handleCopyJson = (item) => {
-    navigator.clipboard.writeText(JSON.stringify(item));
-  };
+    set_mFilterShowData(results);
+  }, [mSearchInputData, mSelectedClass, mItemList]);
 
   return (
     <Layout title="McID" description="Minecraft物品ID查询">
@@ -71,34 +107,47 @@ export default function SearchPage() {
           <Input
             type="text"
             placeholder="搜索物品..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: "calc(100% - 50px - 150px - 10px)" }}
+            value={mSearchInputData}
+            onChange={(e) => set_mSearchInputData(e.target.value)}
+            style={{ width: "calc(100% - 210px)" }}
           />
+          {/* 类别下拉框 */}
           <Select
+            style={{ width: "104px", margin: "0 5px" }}
             defaultValue="all"
-            style={{ width: "120px", margin: "0 5px" }}
-            onChange={setCategory}
-          >
-            <Option value="all">所有分类</Option>
-            {/* 动态生成选项 */}
-            {Array.from(new Set(data.map((item) => item.type))).map((type) => (
-              <Option key={type} value={type}>
-                {type}
-              </Option>
-            ))}
-          </Select>
-          <Button
-            onClick={() => {
-              /* 切换数据源逻辑 */
-            }}
-          >
-            切换版本
-          </Button>
+            onChange={set_mSelectedClass}
+            options={[
+              { value: "all", label: "所有类别" },
+              ...Array.from(new Set(mItemList.map((item) => item.class))).map(
+                (cl) => {
+                  return { value: cl, label: cl };
+                }
+              ),
+            ]}
+          />
+          {/* 版本下拉框 */}
+          <Select
+            style={{ width: "110px" }}
+            defaultValue="default"
+            onChange={set_mSelectedVersion}
+            options={[
+              { value: "default", label: "选择版本" },
+              ...Array.from(new Set(mVersionList)).map((v) => {
+                return { value: v, label: v };
+              }),
+            ]}
+          />
         </div>
 
         {/* 卡片展示区 */}
-        <div style={{ height: "calc(100vh - 135px)", overflowY: "auto" }}>
+        <div
+          style={{
+            height: "calc(100vh - 135px)",
+            width: "calc(100% - 1px)",
+            overflowY: "auto",
+            overflowX: "hidden",
+          }}
+        >
           <List
             rowKey="id"
             grid={{
@@ -110,51 +159,23 @@ export default function SearchPage() {
               xl: 4,
               xxl: 4,
             }}
-            dataSource={[
-              ...[
-                {
-                  id: 1,
-                  title: "卡片列表",
-                  description: "awaa",
-                },
-                {
-                  id: 1,
-                  title: "卡片列表",
-                  description: "awaa",
-                },
-                {
-                  id: 1,
-                  title: "卡片列表",
-                  description: "awaa",
-                },
-                {
-                  id: 1,
-                  title: "卡片列表",
-                  description: "awaa",
-                },
-                {
-                  id: 1,
-                  title: "卡片列表",
-                  description: "awaa",
-                },
-                {
-                  id: 1,
-                  title: "卡片列表",
-                  description: "awaa",
-                },
-              ],
-            ]}
+            dataSource={mFilterShowData}
             // 渲染卡片
-            renderItem={(item) => {
+            renderItem={(mItem) => {
               return (
                 <List.Item
-                  key={item.id}
+                  key={mItem.id}
                   styles={{ width: "100%", height: "201px" }}
                 >
                   <Card
                     hoverable
                     actions={[
-                      <a key="option1" onClick={handleCopyJson({})}>
+                      <a
+                        key="copy"
+                        onClick={() => {
+                          navigator.clipboard.writeText(JSON.stringify(mItem));
+                        }}
+                      >
                         复制JSON
                       </a>,
                       <a key="option2">查看详情</a>,
@@ -164,17 +185,17 @@ export default function SearchPage() {
                       avatar={
                         <Avatar
                           size={48}
-                          src="https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.pngs"
+                          src=""
                           onError={() => {
                             message.error("图片加载失败！");
                             return false;
                           }}
                         />
                       }
-                      title={<a>{item.title}</a>}
+                      title={<a>{mItem.name}</a>}
                       description={
                         <Paragraph ellipsis={{ rows: 3 }}>
-                          {item.description}
+                          {mItem.description}
                         </Paragraph>
                       }
                     />
