@@ -1,43 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  List,
-  Card,
-  Typography,
-  Button,
-  Avatar,
-  Input,
-  Select,
-  message,
-} from "antd";
+import { List, Card, Typography, Input, Select, message } from "antd";
 import axios from "axios";
 import Layout from "@theme/Layout";
 
 const { Paragraph } = Typography;
-const { Option } = Select;
-
-/* 
-
-Github Api:
-tags: https://api.github.com/repos/engsr6982/Minecraft-ItemList/tags
-
-file: https://raw.githubusercontent.com/engsr6982/Minecraft-ItemList/main/Item.json
-
-file_with_version: https://raw.githubusercontent.com/engsr6982/Minecraft-ItemList/v1.19.73/Item.json
-
-file json structure:
-
-[
-	{
-		"name": "橡木板",
-		"type": "minecraft:planks",
-		"id": null,
-		"aux": 0,
-		"class": "建筑",
-		"icon": null
-	}
-]
-
-*/
+const { Search } = Input;
 
 export default function McIDPage() {
   const [mIsLoading, set_mIsLoading] = useState(false); // 是否正在加载
@@ -49,7 +16,9 @@ export default function McIDPage() {
   const [mSelectedClass, set_mSelectedClass] = useState("all"); // 选择的分类
   const [mSelectedVersion, set_mSelectedVersion] = useState(""); // 选择的版本
 
-  const [mFilterShowData, set_mFilterShowData] = useState([]);
+  const [mInputSelectedKey, set_mInputSelectedKey] = useState("name"); // 输入框选中的key
+
+  const [mFilterShowData, set_mFilterShowData] = useState([]); // 过滤后的展示数据
 
   const fetchItemData = useCallback(async () => {
     set_mIsLoading(true);
@@ -76,20 +45,32 @@ export default function McIDPage() {
   }, [fetchItemData]);
 
   useEffect(() => {
+    set_mIsLoading(true);
     let results = mItemList;
     if (mSearchInputData !== "") {
-      results = results.filter((item) =>
-        item.name.toLowerCase().includes(mSearchInputData.toLowerCase())
+      results = results.filter(
+        (it) =>
+          mInputSelectedKey !== "id"
+            ? it[mInputSelectedKey] // 名称或命名空间
+                .toLowerCase()
+                .includes(mSearchInputData.toLowerCase())
+            : it[mInputSelectedKey] === parseInt(mSearchInputData) // ID
       );
     }
     if (mSelectedClass !== "all") {
-      results = results.filter((item) => item.type === mSelectedClass);
+      results = results.filter((item) => item.class === mSelectedClass); // 分类过滤
     }
     set_mFilterShowData(results);
-  }, [mSearchInputData, mSelectedClass, mItemList]);
+    set_mIsLoading(false);
+  }, [mSearchInputData, mInputSelectedKey, mSelectedClass, mItemList]);
 
   return (
     <Layout title="McID" description="Minecraft物品ID查询">
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
       <div
         style={{
           padding: "20px",
@@ -104,20 +85,35 @@ export default function McIDPage() {
             marginBottom: "20px",
           }}
         >
-          <Input
+          <Search
             type="text"
             placeholder="搜索物品..."
-            value={mSearchInputData}
+            // value={mSearchInputData} // !不要设置value，否则会导致搜索框无法输入
+            disabled={mIsLoading} // 加载中禁用
+            loading={mIsLoading} // 加载中显示
+            addonBefore={
+              <Select
+                defaultValue={"name"}
+                options={[
+                  { value: "name", label: "名称" },
+                  { value: "type", label: "命名空间" },
+                  { value: "id", label: "别名ID" },
+                ]}
+                onChange={set_mInputSelectedKey}
+              />
+            }
             onChange={(e) => set_mSearchInputData(e.target.value)}
+            onSearch={(value) => set_mSearchInputData(value)}
             style={{ width: "calc(100% - 210px)" }}
           />
           {/* 类别下拉框 */}
           <Select
-            style={{ width: "104px", margin: "0 5px" }}
+            style={{ width: "80px", margin: "0 5px" }}
             defaultValue="all"
+            disabled={mIsLoading} // 加载中禁用
             onChange={set_mSelectedClass}
             options={[
-              { value: "all", label: "所有类别" },
+              { value: "all", label: "所有" },
               ...Array.from(new Set(mItemList.map((item) => item.class))).map(
                 (cl) => {
                   return { value: cl, label: cl };
@@ -128,11 +124,13 @@ export default function McIDPage() {
           {/* 版本下拉框 */}
           <Select
             style={{ width: "110px" }}
+            disabled={mIsLoading} // 加载中禁用
             defaultValue="default"
             onChange={set_mSelectedVersion}
             options={[
-              { value: "default", label: "选择版本" },
               ...Array.from(new Set(mVersionList)).map((v) => {
+                if (v === mSelectedVersion)
+                  return { value: "default", label: v }; // 默认选择第一个版本
                 return { value: v, label: v };
               }),
             ]}
@@ -150,6 +148,12 @@ export default function McIDPage() {
         >
           <List
             rowKey="id"
+            bordered={true}
+            loading={mIsLoading}
+            pagination={{
+              position: "both",
+              align: "end",
+            }}
             grid={{
               gutter: 16,
               xs: 1,
@@ -159,8 +163,13 @@ export default function McIDPage() {
               xl: 4,
               xxl: 4,
             }}
+            style={{
+              height: "98%",
+              overflowY: "auto",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
             dataSource={mFilterShowData}
-            // 渲染卡片
             renderItem={(mItem) => {
               return (
                 <List.Item
@@ -183,12 +192,12 @@ export default function McIDPage() {
                   >
                     <Card.Meta
                       avatar={
-                        <Avatar
-                          size={48}
+                        <img
+                          loading="lazy"
                           src=""
-                          onError={() => {
-                            message.error("图片加载失败！");
-                            return false;
+                          style={{
+                            width: "48px",
+                            height: "48px",
                           }}
                         />
                       }
