@@ -1,0 +1,3 @@
+.custom-card-padding .ant-card-body {
+    padding: 16px !important; /* 覆盖默认的padding 24px */
+}
