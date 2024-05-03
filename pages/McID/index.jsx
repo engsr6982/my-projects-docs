@@ -42,23 +42,27 @@ export default function McIDPage() {
 
   const [mFilterShowData, set_mFilterShowData] = useState([]); // 过滤后的展示数据
 
-  useEffect(async () => {
-    set_mIsLoading(true);
-    if (mVersionList.length === 0) {
-      const verData = await axios(
-        "https://api.github.com/repos/engsr6982/Minecraft-ItemList/tags"
+  useEffect(() => {
+    const fetchData = async () => {
+      set_mIsLoading(true);
+      if (mVersionList.length === 0) {
+        const verData = await axios(
+          "https://api.github.com/repos/engsr6982/Minecraft-ItemList/tags"
+        );
+        if (verData.status !== 200) return message.error("获取版本列表失败！");
+        set_mVersionList(verData.data.map((item) => item.name)); // 获取版本列表
+        set_mSelectedVersion(verData.data[0].name); // 默认选择第一个版本
+      }
+      if (mSelectedVersion === "") return message.error("请选择版本！");
+      const itData = await axios(
+        // `https://raw.githubusercontent.com/engsr6982/Minecraft-ItemList/${mSelectedVersion}/Item.json`
+        `https://cdn.jsdelivr.net/gh/engsr6982/Minecraft-ItemList@${mSelectedVersion}/Item.json`
       );
-      if (verData.status !== 200) return message.error("获取版本列表失败！");
-      set_mVersionList(verData.data.map((item) => item.name)); // 获取版本列表
-      set_mSelectedVersion(verData.data[0].name); // 默认选择第一个版本
-    }
-    if (mSelectedVersion === "") return message.error("请选择版本！");
-    const itData = await axios(
-      `https://raw.githubusercontent.com/engsr6982/Minecraft-ItemList/${mSelectedVersion}/Item.json`
-    );
-    if (itData.status !== 200) return message.error("获取物品列表失败！");
-    set_mItemList(itData.data);
-    set_mIsLoading(false);
+      if (itData.status !== 200) return message.error("获取物品列表失败！");
+      set_mItemList(itData.data);
+      set_mIsLoading(false);
+    };
+    fetchData();
   }, [mSelectedVersion, mVersionList]);
 
   useEffect(() => {
@@ -113,6 +117,7 @@ export default function McIDPage() {
             addonBefore={
               <Select
                 defaultValue={"name"}
+                disabled={mIsLoading} // 加载中禁用
                 options={[
                   { value: "name", label: "Name" },
                   { value: "type", label: "Type" },
@@ -166,7 +171,7 @@ export default function McIDPage() {
           }}
         >
           <List
-            rowKey="id"
+            // rowKey="id"
             bordered={true}
             loading={mIsLoading}
             pagination={{
@@ -295,10 +300,14 @@ export default function McIDPage() {
                         avatar={
                           <img
                             loading="lazy"
-                            src=""
+                            src="" // TODO: 加载物品图标
                             style={{
                               width: "48px",
                               height: "48px",
+                            }}
+                            onError={(e) => {
+                              e.target.src =
+                                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAADk0lEQVR4nO2Y3U/TYBTGFxP9J/RWL7zFFW646ZagiciCfJj4N8C1XnkL0g0QNkU0DuRmwTnTYmZYxxQIbDEQMOnGGENgjPkFjn3csMgxb7cBXdt1ny0kO8mTLG3f5Pm1z3nfk6lUtapVrWpVq0pXj2v1GuHwThIOJkbQXlBUDuSBsfZOM9cLNt9He/cVN05zhTzpaf9VSQD2zZ8Dw4SwLAUAnIPY0GJiotIAipv05lUNgKjwG9U7fTC2HAGbP8bKvBxhr12YL2BejgAVTHKErl0YAJs/xgOwrceUARj8vM7qQgIYnD4Yce+wMsyslRWhsSUFImRa+A4vPSFWpoWtgtfpnT4WQtEmHpwNnJjP6tmXjar0jKrSAIYZH4x4dngAxUaJUATA6YXnC1s881mhe+caYGh2Q9T8SZTmhKM06gnBK8+OcgAoHiMS5tNRCoFhxs9Za5wLArmRADKYANP8pgIAKDqL25Lms3qxuA36zNoBl5/d58/u+QMuv7wAQ3PBgs1nNTwbBD3tAwuzz9v3J5mDvFtnRQH6Xf6izbNyh2Bi9RfPPJURuld1APSWUBxKAchnnsqokKYuC8A4X3x0kMxLEbZhxYx/XI+Cx0JB8PEj2OvUwd/bjax2O1pgpbsbbMNm6J/+Vh4AarRSzL/+GoYPgbioefekHX536iChwfJqr+0uWE3jpQGw0XEXH51Rzy5Y16KCxqcCcfD1EpLGcxXXqPvgiepSUQDG+dNBrRhZmAPRN1+K+cQpRG9JPVApWY3jPFPJ1iZIaBv4hrUN6Xu5z+OYThEA1IwozxwzD5rhXzgEKTvFhdDWQ4q0wvHPCCQfcvskjqs3of3mFdkBbENvuObvN8FxJAzZStnJNIS2gf2dLfQMepYLgbXLDrDS1ZUTkXo4It+dGE1DUJCi3udcy4CdXYtjE7IDhNuaBXJez4OQNJ/WGg+gj2YOqwkQvdMovLtohSF4fcGROi7wBRirUgApysoH+DQlDoCrD/kADu8Ngmb+VC1C7feEzZN885JfAcd8glsp+h8e/ZVdjTih2UbKfMpOwlHO1xCBeKuSu+JadUelttEYjrXJDgB1dZcTGnVA+CAjeQcZauzjH0IHGRYUPMjkqJj2VmvZo4QGa1EpWWiqTJQ8zGE9KqULjcRxXP20lEk07zgtdyVxTJfbEyKHVkDx2IgVamw0mKHZBu3t6IRlhX7j2ATabdAzQov/A+VQ83mEsVV5AAAAAElFTkSuQmCC";
                             }}
                           />
                         }
