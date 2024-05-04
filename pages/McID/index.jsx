@@ -197,7 +197,7 @@ export default function McIDPage() {
             renderItem={(mItem) => {
               return (
                 <List.Item
-                  key={mItem.id}
+                  key={`${mItem.type}-${mItem.id}-${mItem.aux}`}
                   styles={{ width: "100%", height: "201px" }}
                 >
                   <Ribbon
