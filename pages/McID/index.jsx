@@ -187,11 +187,6 @@ export default function McIDPage() {
 
   return (
     <Layout title="McID" description="BedrockItems ID Search">
-      <style>{`
-          .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-          }
-        `}</style>
       {/* 全局Div */}
       <div
         style={{
@@ -201,18 +196,13 @@ export default function McIDPage() {
         }}
       >
         {/* 操作栏 */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "8px",
-          }}
-        >
+        <div className="operation-bar">
           <Search
+            className="search-bar"
             type="text"
             placeholder="搜索物品..."
             disabled={mIsLoading}
-            loading={mIsLoading} // 加载中显示
+            loading={mIsLoading}
             addonBefore={
               <Select
                 defaultValue={"name"}
@@ -223,34 +213,36 @@ export default function McIDPage() {
             }
             onChange={(e) => set_mInputData(e.target.value)}
             onSearch={(value) => set_mInputData(value)}
-            style={{ width: "100%" }}
           />
-          {/* 类别下拉框 */}
-          <Select
-            style={{ width: "80px", margin: "0 4px" }}
-            defaultValue="all"
-            disabled={mIsLoading}
-            onChange={set_mSelectedCategory}
-            options={mCategory}
-          />
-          {/* 版本下拉框 */}
-          <Select
-            style={{ width: "98px" }}
-            disabled={mIsLoading}
-            defaultValue="default"
-            onChange={set_mSelectedVersion}
-            options={[
-              ...Array.from(new Set(mVersionList)).map((v) => {
-                if (v === mSelectedVersion)
-                  return { value: "default", label: v }; // 默认选择第一个版本
-                return { value: v, label: v };
-              }),
-            ]}
-          />
+          <div className="select-group">
+            {/* 类别下拉框 */}
+            <Select
+              className="select-item"
+              defaultValue="all"
+              disabled={mIsLoading}
+              onChange={set_mSelectedCategory}
+              options={mCategory}
+            />
+            {/* 版本下拉框 */}
+            <Select
+              className="select-item"
+              disabled={mIsLoading}
+              defaultValue="default"
+              onChange={set_mSelectedVersion}
+              options={[
+                ...Array.from(new Set(mVersionList)).map((v) => {
+                  if (v === mSelectedVersion)
+                    return { value: "default", label: v };
+                  return { value: v, label: v };
+                }),
+              ]}
+            />
+          </div>
         </div>
 
         {/* 卡片展示区 */}
         <div
+          className="hide-scrollbar"
           style={{
             height: "calc(100vh - 135px)",
             width: "calc(100% - 1px)",
@@ -301,9 +293,10 @@ export default function McIDPage() {
                       actions={[
                         <a
                           key="copy"
-                          onClick={() =>
-                            navigator.clipboard.writeText(JSON.stringify(it))
-                          }
+                          onClick={() => {
+                            navigator.clipboard.writeText(JSON.stringify(it));
+                            message.info("复制成功");
+                          }}
                         >
                           复制JSON
                         </a>,

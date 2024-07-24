@@ -1,3 +1,48 @@
 .custom-card-padding .ant-card-body {
-    padding: 16px !important; /* 覆盖默认的padding 24px */
+  padding: 16px !important; /* 覆盖默认的padding 24px */
+}
+
+/* 隐藏滚动栏 */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 自适应下拉框 */
+.operation-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.search-bar {
+  width: 100%;
+}
+.select-group {
+  display: flex;
+  justify-content: flex-end;
+}
+.select-item {
+  width: 80px;
+  margin: 0 0 0 4px;
+}
+.select-item:last-child {
+  width: 98px;
+}
+@media (max-width: 450px) {
+  .operation-bar {
+    flex-direction: column;
+  }
+  .search-bar {
+    margin-bottom: 5px;
+  }
+  .select-group {
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  .select-item {
+    width: 49% !important;
+    margin: 0 !important;
+  }
+  .select-item:last-child {
+    width: 49% !important;
+  }
 }
