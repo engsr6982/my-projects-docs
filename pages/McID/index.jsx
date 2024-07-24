@@ -18,36 +18,63 @@ const { Paragraph, Text } = Typography;
 const { Search } = Input;
 const { Ribbon } = Badge;
 
-const class2colorStr = (class_) => {
+const category2color = (category) => {
   const colorMap = {
     建筑: "cyan",
-    装备: "purple",
     物品: "volcano",
     自然: "green",
+    装备: "purple",
+    "craftingScreen.tab.commands": "purple", // 特殊分类
   };
-  return colorMap[class_] || "gray";
+  return colorMap[category] || "gray";
 };
+const category2text = (category) => {
+  const textMap = {
+    "craftingScreen.tab.commands": "命令",
+    "craftingScreen.tab.none": "无分类",
+  };
+  return textMap[category] || category;
+};
+function insertBetweenElements(arr, insertStr) {
+  let result = [];
+
+  for (let i = 0; i < arr.length; i++) {
+    result.push(arr[i]);
+    if (i > 0 && i < arr.length - 1) {
+      result.push(insertStr);
+    }
+  }
+
+  return result;
+}
+function generatorID(id) {
+  return Math.random() + Date().toString() + id;
+}
 
 export default function McIDPage() {
   const [mIsLoading, set_mIsLoading] = useState(false); // 是否正在加载
-
-  const [mVersionList, set_mVersionList] = useState([]); // 版本列表数据
-  const [mItemList, set_mItemList] = useState([]); // 物品列表数据
-
-  const [mSearchInputData, set_mSearchInputData] = useState(""); // 搜索框输入数据
-  const [mSelectedClass, set_mSelectedClass] = useState("all"); // 选择的分类
+  const [mInputData, set_mInputData] = useState(""); // 搜索框输入的内容
+  const [mInputSelectedKey, set_mInputSelectedKey] = useState("name"); // 输入框选中的key
+  const [mSelectedCategory, set_mSelectedCategory] = useState("all"); // 选择的分类
   const [mSelectedVersion, set_mSelectedVersion] = useState(""); // 选择的版本
 
-  const [mInputSelectedKey, set_mInputSelectedKey] = useState("name"); // 输入框选中的key
+  const [mVersionList, set_mVersionList] = useState([]); // 版本列表数据
+  const [mFilterData, set_mFilterData] = useState([]); // 过滤后的数据
 
-  const [mFilterShowData, set_mFilterShowData] = useState([]); // 过滤后的展示数据
+  const [mIsNewDataStruct, set_mIsNewDataStructure] = useState(false); // 是否是新数据结构
+  const [mSourceData, set_mSourceData] = useState(null); // 原始数据
+  const [mItems, set_mItems] = useState([]); // 物品列表数据
+  const [mTr, set_mTr] = useState({}); // 键翻译数据
+  const [mCategory, set_mCategory] = useState([]); // 分类数据
+  const [mSerachCanSelectKey, set_mSerachCanSelectKey] = useState([]); // 搜索框可选的key
 
+  // 网络请求数据
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchVersion = async () => {
       set_mIsLoading(true);
       if (mVersionList.length === 0) {
         const verData = await axios(
-          "https://api.github.com/repos/engsr6982/Minecraft-ItemList/tags"
+          "https://api.github.com/repos/engsr6982/BedrockItems/tags"
         );
         if (verData.status !== 200) return message.error("获取版本列表失败！");
         set_mVersionList(verData.data.map((item) => item.name)); // 获取版本列表
@@ -55,43 +82,116 @@ export default function McIDPage() {
       }
       if (mSelectedVersion === "") return message.error("请选择版本！");
       const itData = await axios(
-        // `https://raw.githubusercontent.com/engsr6982/Minecraft-ItemList/${mSelectedVersion}/Item.json`
-        `https://cdn.jsdelivr.net/gh/engsr6982/Minecraft-ItemList@${mSelectedVersion}/Item.json`
+        // `https://raw.githubusercontent.com/engsr6982/BedrockItems/${mSelectedVersion}/Item.json`
+        `https://cdn.jsdelivr.net/gh/engsr6982/BedrockItems@${mSelectedVersion}/Item.json`
       );
       if (itData.status !== 200) return message.error("获取物品列表失败！");
-      set_mItemList(itData.data);
+      set_mSourceData(itData.data);
       set_mIsLoading(false);
     };
-    fetchData();
+    fetchVersion();
   }, [mSelectedVersion, mVersionList]);
 
+  // 处理新旧数据
+  useEffect(() => {
+    if (mSourceData === null) return;
+    set_mIsLoading(true);
+    if (Object.prototype.toString.call(mSourceData) === "[object Object]") {
+      set_mIsNewDataStructure(true); // 新数据结构
+      set_mItems(mSourceData.items);
+      set_mTr(mSourceData.tr);
+      set_mCategory([
+        { value: "all", label: "所有" },
+        ...mSourceData.category.map((i) => {
+          return { value: category2text(i), label: category2text(i) };
+        }),
+      ]);
+      set_mSerachCanSelectKey([
+        { value: "name", label: "名称" },
+        { value: "typeName", label: "Type" },
+        { value: "id", label: "ID" },
+      ]);
+    } else {
+      set_mIsNewDataStructure(false); // 旧数据结构
+      set_mItems(mSourceData);
+      set_mCategory([
+        { value: "all", label: "所有" },
+        ...Array.from(new Set(mSourceData.map((it) => it.class))).map((i) => {
+          return { value: i, label: i };
+        }),
+      ]);
+      set_mTr({
+        name: "名称",
+        type: "命名空间",
+        id: "ID",
+        aux: "特殊值",
+        class: "类别",
+        icon: "图标",
+      });
+      set_mSerachCanSelectKey([
+        { value: "name", label: "Name" },
+        { value: "type", label: "Type" },
+        { value: "id", label: "ID" },
+      ]);
+    }
+    set_mIsLoading(false);
+  }, [mSourceData]);
+
+  // 搜索过滤
   useEffect(() => {
     set_mIsLoading(true);
-    let results = mItemList;
-    if (mSearchInputData !== "") {
-      results = results.filter(
-        (it) =>
-          mInputSelectedKey !== "id"
-            ? it[mInputSelectedKey] // 名称或命名空间
-                .toLowerCase()
-                .includes(mSearchInputData.toLowerCase())
-            : it[mInputSelectedKey] === parseInt(mSearchInputData) // ID
+    let results = mItems;
+
+    // 搜索过滤
+    if (mInputData !== "") {
+      results = results.filter((it) =>
+        mInputSelectedKey === "id"
+          ? it[mInputSelectedKey] === parseInt(mInputData) // ID
+          : it[mInputSelectedKey] // 名称或命名空间
+              .toLowerCase()
+              .trim()
+              .includes(mInputData.toLowerCase().trim())
       );
     }
-    if (mSelectedClass !== "all") {
-      results = results.filter((item) => item.class === mSelectedClass); // 分类过滤
+    // 分类过滤
+    if (mSelectedCategory !== "all") {
+      results = results.filter(
+        (item) =>
+          (mIsNewDataStruct ? category2text(item.categoryName) : item.class) ===
+          mSelectedCategory
+      );
     }
-    set_mFilterShowData(results);
+    set_mFilterData(results);
     set_mIsLoading(false);
-  }, [mSearchInputData, mInputSelectedKey, mSelectedClass, mItemList]);
+  }, [mInputData, mInputSelectedKey, mSelectedCategory, mItems]);
+
+  const RenderDescription = (it) => {
+    const arr = mIsNewDataStruct
+      ? ["effectName", "typeName", "aux", "id"]
+      : ["type", "id", "aux", "icon"];
+    return insertBetweenElements(
+      arr.map((i) => {
+        return (
+          it[i] !== "" && (
+            <Text type="secondary" ellipsis={true}>
+              {mTr[i]}:<Text> {String(it[i])}</Text>
+            </Text>
+          )
+        );
+      }),
+      <>
+        <br />
+      </>
+    );
+  };
 
   return (
-    <Layout title="McID" description="Minecraft物品ID查询">
+    <Layout title="McID" description="BedrockItems ID Search">
       <style>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
+          .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
       {/* 全局Div */}
       <div
         style={{
@@ -111,44 +211,32 @@ export default function McIDPage() {
           <Search
             type="text"
             placeholder="搜索物品..."
-            // value={mSearchInputData} // !不要设置value，否则会导致搜索框无法输入
-            disabled={mIsLoading} // 加载中禁用
+            disabled={mIsLoading}
             loading={mIsLoading} // 加载中显示
             addonBefore={
               <Select
                 defaultValue={"name"}
-                disabled={mIsLoading} // 加载中禁用
-                options={[
-                  { value: "name", label: "Name" },
-                  { value: "type", label: "Type" },
-                  { value: "id", label: "ID" },
-                ]}
+                disabled={mIsLoading}
+                options={mSerachCanSelectKey}
                 onChange={set_mInputSelectedKey}
               />
             }
-            onChange={(e) => set_mSearchInputData(e.target.value)}
-            onSearch={(value) => set_mSearchInputData(value)}
+            onChange={(e) => set_mInputData(e.target.value)}
+            onSearch={(value) => set_mInputData(value)}
             style={{ width: "100%" }}
           />
           {/* 类别下拉框 */}
           <Select
             style={{ width: "80px", margin: "0 4px" }}
             defaultValue="all"
-            disabled={mIsLoading} // 加载中禁用
-            onChange={set_mSelectedClass}
-            options={[
-              { value: "all", label: "所有" },
-              ...Array.from(new Set(mItemList.map((item) => item.class))).map(
-                (cl) => {
-                  return { value: cl, label: cl };
-                }
-              ),
-            ]}
+            disabled={mIsLoading}
+            onChange={set_mSelectedCategory}
+            options={mCategory}
           />
           {/* 版本下拉框 */}
           <Select
             style={{ width: "98px" }}
-            disabled={mIsLoading} // 加载中禁用
+            disabled={mIsLoading}
             defaultValue="default"
             onChange={set_mSelectedVersion}
             options={[
@@ -171,7 +259,6 @@ export default function McIDPage() {
           }}
         >
           <List
-            // rowKey="id"
             bordered={true}
             loading={mIsLoading}
             pagination={{ position: "both", align: "end" }}
@@ -190,16 +277,22 @@ export default function McIDPage() {
               scrollbarWidth: "none",
               msOverflowStyle: "none",
             }}
-            dataSource={mFilterShowData}
-            renderItem={(mItem) => {
+            dataSource={mFilterData}
+            renderItem={(it) => {
               return (
                 <List.Item
-                  key={mItem.id}
+                  key={generatorID(it.id)}
                   styles={{ width: "100%", height: "201px" }}
                 >
                   <Ribbon
-                    text={mItem.class}
-                    color={class2colorStr(mItem.class)}
+                    text={
+                      mIsNewDataStruct
+                        ? category2text(it.categoryName)
+                        : it.class
+                    }
+                    color={category2color(
+                      mIsNewDataStruct ? it.categoryName : it.class
+                    )}
                     style={{ zIndex: 1 }}
                   >
                     <Card
@@ -209,7 +302,7 @@ export default function McIDPage() {
                         <a
                           key="copy"
                           onClick={() =>
-                            navigator.clipboard.writeText(JSON.stringify(mItem))
+                            navigator.clipboard.writeText(JSON.stringify(it))
                           }
                         >
                           复制JSON
@@ -220,7 +313,7 @@ export default function McIDPage() {
                             Modal.info({
                               mask: true,
                               okText: "关闭",
-                              title: `${mItem.name} 的详细信息`,
+                              title: `${it.name}`,
                               content: (
                                 <>
                                   <Descriptions
@@ -228,60 +321,15 @@ export default function McIDPage() {
                                     bordered={true}
                                     layout="vertical"
                                     items={[
-                                      {
-                                        key: "name",
-                                        label: "名称",
-                                        children: (
-                                          <Text copyable={true}>
-                                            {mItem.name}
-                                          </Text>
-                                        ),
-                                      },
-                                      {
-                                        key: "type",
-                                        label: "命名空间",
-                                        children: (
-                                          <Text copyable={true}>
-                                            {mItem.type}
-                                          </Text>
-                                        ),
-                                      },
-                                      {
-                                        key: "id",
-                                        label: "别名ID",
-                                        children: (
-                                          <Text copyable={true}>
-                                            {String(mItem.id)}
-                                          </Text>
-                                        ),
-                                      },
-                                      {
-                                        key: "aux",
-                                        label: "特殊值",
-                                        children: (
-                                          <Text copyable={true}>
-                                            {mItem.aux}
-                                          </Text>
-                                        ),
-                                      },
-                                      {
-                                        key: "class",
-                                        label: "分类",
-                                        children: (
-                                          <Text copyable={true}>
-                                            {mItem.class}
-                                          </Text>
-                                        ),
-                                      },
-                                      {
-                                        key: "icon",
-                                        label: "图标",
-                                        children: (
-                                          <Text copyable={true}>
-                                            {String(mItem.icon)}
-                                          </Text>
-                                        ),
-                                      },
+                                      ...Object.keys(it).map((k) => {
+                                        return {
+                                          key: k,
+                                          label: mTr[k],
+                                          children: (
+                                            <Text copyable={true}>{it[k]}</Text>
+                                          ),
+                                        };
+                                      }),
                                     ]}
                                   />
                                 </>
@@ -289,7 +337,7 @@ export default function McIDPage() {
                             })
                           }
                         >
-                          查看详情
+                          详细信息
                         </a>,
                       ]}
                     >
@@ -301,28 +349,10 @@ export default function McIDPage() {
                             style={{ width: "48px", height: "48px" }}
                           />
                         }
-                        title={<a>{mItem.name}</a>}
+                        title={<a>{it.name}</a>}
                         description={
                           <Paragraph style={{ margin: 0 }}>
-                            <Text type="secondary" ellipsis={true}>
-                              Type:
-                              <Text> {mItem.type}</Text>
-                            </Text>
-                            <br />
-                            <Text type="secondary" ellipsis={true}>
-                              ID:
-                              <Text> {String(mItem.id)}</Text>
-                            </Text>
-                            <br />
-                            <Text type="secondary" ellipsis={true}>
-                              Aux:
-                              <Text> {String(mItem.aux)}</Text>
-                            </Text>
-                            <br />
-                            <Text type="secondary" ellipsis={true}>
-                              Icon:
-                              <Text> {String(mItem.icon)}</Text>
-                            </Text>
+                            {RenderDescription(it)}
                           </Paragraph>
                         }
                       />

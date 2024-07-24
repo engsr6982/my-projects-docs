@@ -75,7 +75,7 @@ const config = {
             position: "left",
           },
           {
-            label: "Minecraft物品查询",
+            label: "BedrockItems 查询",
             position: "left",
             to: "/McID",
           },
