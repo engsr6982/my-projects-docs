@@ -174,7 +174,7 @@ export default function McIDPage() {
         return (
           it[i] !== "" && (
             <Text type="secondary" ellipsis={true}>
-              {mTr[i]}:<Text> {String(it[i])}</Text>
+              {mTr[i]}:<Text copyable={true}> {String(it[i])}</Text>
             </Text>
           )
         );
@@ -342,7 +342,12 @@ export default function McIDPage() {
                             style={{ width: "48px", height: "48px" }}
                           />
                         }
-                        title={<a>{it.name}</a>}
+                        // title={<a>{it.name}</a>}
+                        title={
+                          <a>
+                            <Text copyable={true}>{it.name}</Text>
+                          </a>
+                        }
                         description={
                           <Paragraph style={{ margin: 0 }}>
                             {RenderDescription(it)}
