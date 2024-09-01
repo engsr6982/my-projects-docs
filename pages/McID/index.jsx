@@ -51,6 +51,25 @@ function generatorID(id) {
   return Math.random() + Date().toString() + id;
 }
 
+class VersionCache {
+  /**
+   *
+   * @param {Array<string>} newVersion
+   */
+  static updateCache(newVersion) {
+    localStorage.setItem("version", JSON.stringify(newVersion));
+  }
+
+  /**
+   *
+   * @returns {Array<string> | null}
+   */
+  static tryGetCache() {
+    const str = localStorage.getItem("version");
+    return str ? JSON.parse(str) : null;
+  }
+}
+
 export default function McIDPage() {
   const [mIsLoading, set_mIsLoading] = useState(false); // 是否正在加载
   const [mInputData, set_mInputData] = useState(""); // 搜索框输入的内容
@@ -76,11 +95,28 @@ export default function McIDPage() {
         const verData = await axios(
           "https://api.github.com/repos/engsr6982/BedrockItems/tags"
         );
-        if (verData.status !== 200) return message.error("获取版本列表失败！");
-        set_mVersionList(verData.data.map((item) => item.name)); // 获取版本列表
-        set_mSelectedVersion(verData.data[0].name); // 默认选择第一个版本
+        /** @type {Array<string>}*/ let vers = null;
+
+        if (verData.status == 200) {
+          vers = verData.data.map((item) => item.name);
+          VersionCache.updateCache(vers);
+        } else {
+          message.error("获取版本列表失败，尝试使用缓存...");
+          const ver = VersionCache.tryGetCache();
+          if (ver === null) {
+            message.error("获取版本列表失败！");
+          }
+          vers = ver;
+        }
+
+        if (vers !== null) {
+          set_mVersionList(vers); // 获取版本列表
+          set_mSelectedVersion(vers[0]); // 默认选择第一个版本
+        }
       }
       if (mSelectedVersion === "") return message.error("请选择版本！");
+
+      // 获取物品列表
       const itData = await axios(
         // `https://raw.githubusercontent.com/engsr6982/BedrockItems/${mSelectedVersion}/Item.json`
         `https://cdn.jsdelivr.net/gh/engsr6982/BedrockItems@${mSelectedVersion}/Item.json`
