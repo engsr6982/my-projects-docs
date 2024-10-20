@@ -30,7 +30,21 @@
 }
 
 .phone-select-item-start {
-  margin-left: auto;
+  margin-left: 5px;
+}
+
+/* 全局样式 */
+.global {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  margin: 20px;
+}
+.card-list {
+  width: calc(100% - 1px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 145px);
 }
 
 @media (max-width: 450px) {
@@ -42,9 +56,11 @@
   }
   .select-group {
     justify-content: space-between;
-    margin-bottom: 5px;
   }
   .phone-select-item-start {
     margin-left: 0 !important;
+  }
+  .card-list {
+    height: calc(100vh - 180px);
   }
 }

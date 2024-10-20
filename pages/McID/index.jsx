@@ -224,13 +224,7 @@ export default function McIDPage() {
   return (
     <Layout title="McID" description="BedrockItems ID Search">
       {/* 全局Div */}
-      <div
-        style={{
-          padding: "20px",
-          height: "calc(100vh - 60px)",
-          borderRadius: "10px",
-        }}
-      >
+      <div className="global">
         {/* 操作栏 */}
         <div className="operation-bar">
           <Search
@@ -277,15 +271,7 @@ export default function McIDPage() {
         </div>
 
         {/* 卡片展示区 */}
-        <div
-          className="hide-scrollbar"
-          style={{
-            height: "calc(100vh - 135px)",
-            width: "calc(100% - 1px)",
-            overflowY: "auto",
-            overflowX: "hidden",
-          }}
-        >
+        <div className="hide-scrollbar card-list">
           <List
             bordered={true}
             loading={mIsLoading}
@@ -300,7 +286,7 @@ export default function McIDPage() {
               xxl: 4,
             }}
             style={{
-              height: "98%",
+              height: "100%",
               overflowY: "auto",
               scrollbarWidth: "none",
               msOverflowStyle: "none",
