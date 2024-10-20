@@ -7,26 +7,32 @@
   display: none;
 }
 
-/* 自适应下拉框 */
+/* 操作栏 */
 .operation-bar {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
+/* 搜索框 */
 .search-bar {
-  width: 100%;
+  flex-basis: 80%;
 }
+/* 下拉选择组 */
 .select-group {
+  flex-basis: 20%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
 }
+/* 组元素 */
 .select-item {
-  width: 80px;
-  margin: 0 0 0 4px;
+  flex-basis: 50%;
+  margin: 0 0 0 5px;
 }
-.select-item:last-child {
-  width: 98px;
+
+.phone-select-item-start {
+  margin-left: auto;
 }
+
 @media (max-width: 450px) {
   .operation-bar {
     flex-direction: column;
@@ -38,11 +44,7 @@
     justify-content: space-between;
     margin-bottom: 5px;
   }
-  .select-item {
-    width: 49% !important;
-    margin: 0 !important;
-  }
-  .select-item:last-child {
-    width: 49% !important;
+  .phone-select-item-start {
+    margin-left: 0 !important;
   }
 }

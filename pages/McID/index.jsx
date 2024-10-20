@@ -253,7 +253,7 @@ export default function McIDPage() {
           <div className="select-group">
             {/* 类别下拉框 */}
             <Select
-              className="select-item"
+              className="select-item phone-select-item-start"
               defaultValue="all"
               disabled={mIsLoading}
               onChange={set_mSelectedCategory}
